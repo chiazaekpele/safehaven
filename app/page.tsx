@@ -5,18 +5,13 @@ import { Hero } from "@/components/Hero";
 import { ImpactCounter } from "@/components/ImpactCounter";
 import { ProvisionSection } from "@/components/ProvisionSection";
 import { StickyDonate } from "@/components/StickyDonate";
-import { DEFAULT_MEAL_COST_KOBO } from "@/lib/config";
-import type { PublicImpact } from "@/lib/impact-types";
+import { getPublicImpactSafe } from "@/lib/impact";
 
-// Live totals are wired to Neon in a later step; until then they show as loading.
-const impact: PublicImpact = {
-  historicalRaisedLabel: "₦400,000+",
-  historicalStudentsLabel: "300+",
-  mealCostKobo: DEFAULT_MEAL_COST_KOBO,
-  current: null,
-};
+// Re-render at most every 30s; the counter also polls /api/impact while open.
+export const revalidate = 30;
 
-export default function Home() {
+export default async function Home() {
+  const impact = await getPublicImpactSafe();
   return (
     <>
       <Hero />
