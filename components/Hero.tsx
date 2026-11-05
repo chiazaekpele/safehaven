@@ -19,19 +19,19 @@ export function Hero() {
       </div>
       <div
         id="hero-cta"
-        className="mx-auto grid max-w-3xl grid-cols-1 gap-3 px-5 py-8 sm:grid-cols-2"
+        className="mx-auto flex max-w-3xl flex-col items-center gap-4 px-5 pt-6 pb-10 sm:flex-row sm:justify-center sm:gap-6 sm:pt-8"
       >
         <a
           href="#donate"
-          className="rounded-full bg-burgundy px-8 py-3.5 text-center text-lg font-semibold text-cream shadow-sm transition hover:bg-burgundy-dark focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-orange"
+          className="w-full rounded-full bg-burgundy px-10 py-3 text-center text-base font-semibold text-cream shadow-sm transition hover:bg-burgundy-dark focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-orange sm:w-auto sm:text-lg"
         >
           Donate now
         </a>
         <a
           href="#provisions"
-          className="rounded-full border-2 border-brown px-8 py-3 text-center text-lg font-semibold text-brown transition hover:bg-brown hover:text-cream focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-orange"
+          className="rounded-sm font-semibold text-brown underline decoration-brown/30 underline-offset-4 transition hover:decoration-brown focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-orange"
         >
-          Donate provisions
+          Or donate provisions
         </a>
       </div>
     </header>

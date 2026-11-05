@@ -32,7 +32,7 @@ export function StickyDonate() {
       <a
         href="#donate"
         tabIndex={show ? 0 : -1}
-        className="block rounded-full bg-burgundy py-3.5 text-center text-lg font-semibold text-cream shadow-sm focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-orange"
+        className="block rounded-full bg-burgundy py-3 text-center text-base font-semibold text-cream shadow-sm focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-orange"
       >
         Donate now
       </a>
