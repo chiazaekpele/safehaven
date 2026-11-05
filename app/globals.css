@@ -1,0 +1,33 @@
+@import "tailwindcss";
+
+/* Palette from the approved flyer brief: cream, dark brown, orange/yellow, burgundy. */
+@theme {
+  --color-cream: #fbf5ea;
+  --color-cream-dark: #f3e7d3;
+  --color-brown: #3b2416;
+  --color-brown-light: #6b4a33;
+  --color-orange: #d9731a;
+  --color-yellow: #f2b134;
+  --color-burgundy: #7a1f2b;
+  --color-burgundy-dark: #5e1620;
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --font-display: Georgia, "Times New Roman", serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  background: var(--color-cream);
+  color: var(--color-brown);
+  font-family: var(--font-sans);
+}
