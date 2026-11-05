@@ -52,7 +52,7 @@ export function DonationSection({ mealCostKobo }: { mealCostKobo: number }) {
     "rounded-xl border-2 px-4 py-3 text-lg font-semibold transition focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-orange";
 
   return (
-    <section id="donate" aria-labelledby="donate-title" className="bg-cream">
+    <section id="donate" aria-labelledby="donate-title" className="border-t border-brown/10 bg-paper">
       <div className="mx-auto max-w-2xl px-5 py-16 md:py-20">
         <h2 id="donate-title" className="font-display text-3xl font-bold text-brown sm:text-4xl">
           Give a meal

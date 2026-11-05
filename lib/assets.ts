@@ -17,13 +17,6 @@ export const IMAGES = {
     height: 1280,
     available: true,
   },
-  mealPacks: {
-    src: "/images/meal-packs.jpg",
-    alt: "Packed meals of rice and chicken ready to be shared with students",
-    width: 960,
-    height: 1280,
-    available: true,
-  },
   flyer: {
     src: "/flyer/flyer.jpg",
     alt: "Safe Haven Foundation presents Food Donation, 3rd Edition. Help provide a meal. We can't fix everything that's wrong with the world but with ₦1,200 we can provide a meal to one person. You can also donate provisions.",

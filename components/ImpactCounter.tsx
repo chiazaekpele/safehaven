@@ -38,7 +38,7 @@ export function ImpactCounter({ initial }: { initial: PublicImpact }) {
     : 0;
 
   return (
-    <section id="impact" aria-labelledby="impact-title" className="bg-cream-dark">
+    <section id="impact" aria-labelledby="impact-title" className="bg-paper">
       <div className="mx-auto max-w-6xl px-5 py-16 md:py-20">
         <h2 id="impact-title" className="font-display text-3xl font-bold text-brown sm:text-4xl">
           Our impact
@@ -46,7 +46,7 @@ export function ImpactCounter({ initial }: { initial: PublicImpact }) {
 
         <div className="mt-10 grid gap-6 lg:grid-cols-2">
           {/* Historical milestones */}
-          <div className="rounded-2xl bg-cream p-6 shadow-sm">
+          <div className="rounded-2xl border border-brown/10 bg-cream p-6">
             <h3 className="text-sm font-semibold uppercase tracking-widest text-burgundy">
               Since January
             </h3>
