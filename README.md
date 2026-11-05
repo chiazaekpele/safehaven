@@ -78,5 +78,43 @@ The webhook is rejected unless its `x-paystack-signature` (HMAC-SHA512 of the ra
 | `npm run dev` | Development server |
 | `npm run build` | Production build |
 | `npm run lint` / `npm run typecheck` | ESLint / TypeScript |
-| `npm test` | Unit tests (Vitest) |
+| `npm test` | Unit tests (Vitest, no network) |
+| `npm run test:db` | Aggregate test against Neon in a rolled-back transaction (writes nothing) |
 | `npm run db:migrate` | Apply `db/schema.sql` |
+
+## Deploying to Vercel
+
+Vercel builds automatically on every push to `main`.
+
+**Environment variables** (Project → Settings → Environment Variables):
+
+| Variable | Production | Preview |
+|---|---|---|
+| `DATABASE_URL` | Neon connection string | Prefer a separate Neon branch |
+| `PAYSTACK_SECRET_KEY` | `sk_live_…` | `sk_test_…` |
+| `NEXT_PUBLIC_SITE_URL` | `https://safehaven-orcin.vercel.app` (or custom domain) | leave unset |
+| `PAYSTACK_PUBLIC_KEY` | optional, unused | optional, unused |
+
+- `NEXT_PUBLIC_SITE_URL` is baked in at build time: **redeploy after changing it**. If it is unset,
+  the site falls back to Vercel's production domain.
+- Never put a `sk_live_` key in `.env.local`, and never use `sk_test_` in Production.
+  Test and live transactions are invisible to each other: a test reference cannot be verified with a live key.
+- The schema must exist before the first deploy: `npm run db:migrate` (safe to re-run).
+
+**Paystack Dashboard → Settings → API Keys & Webhooks, Live mode:**
+callback `https://<domain>/donate/success`, webhook `https://<domain>/api/payments/webhook`.
+Do the same in Test mode if you test on a preview URL.
+
+## Launch checklist
+
+- [ ] `NEXT_PUBLIC_SITE_URL` set for Production, then redeployed; page source shows the real domain in `og:url`
+- [ ] Production uses `sk_live_…`; `.env.local` uses `sk_test_…`
+- [ ] Paystack **Live** webhook URL and callback URL set to the production domain
+- [ ] Minimum donation confirmed in `lib/config.ts` (`MIN_DONATION_NAIRA`, currently ₦100)
+- [ ] `donations` table contains no test rows: `SELECT status, COUNT(*) FROM donations GROUP BY 1;`
+- [ ] Real low-value donation on the live site: Paystack checkout → "Confirming…" → thank-you message,
+      amount and meals shown → counter increases by that amount within ~30s
+- [ ] Same donation appears once in Paystack Dashboard → Transactions, and once in `donations` as `successful`
+- [ ] Paystack Dashboard → Webhooks shows the delivery for that payment as successful (2xx)
+- [ ] WhatsApp share and contact buttons open correctly on a phone
+- [ ] Rotate the Neon password (it was shared during development) and update Vercel + `.env.local`

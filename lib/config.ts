@@ -32,11 +32,19 @@ const CONTACT_PHONE_WA = "2347053898056";
 export const THANK_YOU_MESSAGE =
   "Thank you for helping us get someone food this exam season. We can't fix all the problems in the world but we can give one person a meal. God bless you.";
 
+/**
+ * Public site address, used for the Paystack callback, WhatsApp share link and metadata.
+ * 1. NEXT_PUBLIC_SITE_URL (set this in Vercel; required for a custom domain)
+ * 2. Vercel's automatic production domain, so a missing variable never sends donors to localhost
+ * 3. localhost for development
+ * Env vars are referenced literally so Next.js can inline them at build time.
+ */
 export function siteUrl(): string {
-  return (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").replace(
-    /\/+$/,
-    "",
-  );
+  const configured = process.env.NEXT_PUBLIC_SITE_URL;
+  const vercelProd = process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL;
+  const url =
+    configured || (vercelProd ? `https://${vercelProd}` : "http://localhost:3000");
+  return url.replace(/\/+$/, "");
 }
 
 export function whatsappContactUrl(message?: string): string {
