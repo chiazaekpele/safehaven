@@ -4,6 +4,7 @@ import { DonationSection } from "@/components/DonationSection";
 import { Hero } from "@/components/Hero";
 import { ImpactCounter } from "@/components/ImpactCounter";
 import { ProvisionSection } from "@/components/ProvisionSection";
+import { StickyDonate } from "@/components/StickyDonate";
 import { DEFAULT_MEAL_COST_KOBO } from "@/lib/config";
 import type { PublicImpact } from "@/lib/impact-types";
 
@@ -20,12 +21,13 @@ export default function Home() {
     <>
       <Hero />
       <main>
-        <About />
-        <ImpactCounter initial={impact} />
         <DonationSection mealCostKobo={impact.mealCostKobo} />
+        <ImpactCounter initial={impact} />
+        <About />
         <ProvisionSection />
       </main>
       <ContactSection />
+      <StickyDonate />
     </>
   );
 }

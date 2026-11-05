@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+@theme inline {
+  --font-sans: var(--font-poppins), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
 /* Palette sampled from the approved flyer (public/flyer/flyer.jpg). */
 @theme {
   --color-paper: #fffdf8; /* page background: warm near-white */
@@ -14,9 +18,6 @@
   --color-burgundy: #a5161f;
   --color-burgundy-dark: #7f1018;
 
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif;
-  --font-display: Georgia, "Times New Roman", serif;
 }
 
 html {

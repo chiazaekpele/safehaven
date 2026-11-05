@@ -3,8 +3,20 @@
 import { useEffect, useState } from "react";
 import type { PublicImpact } from "@/lib/impact-types";
 import { formatNaira } from "@/lib/money";
+import { Section } from "./Section";
 
 const POLL_MS = 30_000;
+
+function Stat({ label, value, accent = false }: { label: string; value: string; accent?: boolean }) {
+  return (
+    <div>
+      <dt className="text-sm text-brown-light">{label}</dt>
+      <dd className={`text-2xl font-bold sm:text-3xl ${accent ? "text-burgundy" : "text-brown"}`}>
+        {value}
+      </dd>
+    </div>
+  );
+}
 
 export function ImpactCounter({ initial }: { initial: PublicImpact }) {
   const [impact, setImpact] = useState(initial);
@@ -33,88 +45,50 @@ export function ImpactCounter({ initial }: { initial: PublicImpact }) {
   }, []);
 
   const { current, mealCostKobo } = impact;
-  const progressPct = current
-    ? Math.floor((current.remainderKobo * 100) / mealCostKobo)
-    : 0;
+  const progressPct = current ? Math.floor((current.remainderKobo * 100) / mealCostKobo) : 0;
+  const card = "rounded-2xl border border-brown/10 bg-cream/60 p-5 sm:p-6";
+  const heading = "text-sm font-semibold uppercase tracking-widest";
 
   return (
-    <section id="impact" aria-labelledby="impact-title" className="bg-paper">
-      <div className="mx-auto max-w-6xl px-5 py-16 md:py-20">
-        <h2 id="impact-title" className="font-display text-3xl font-bold text-brown sm:text-4xl">
-          Our impact
-        </h2>
+    <Section id="impact" title="Our impact">
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className={card}>
+          <h3 className={`${heading} text-brown-light`}>Since January</h3>
+          <dl className="mt-4 grid grid-cols-2 gap-4">
+            <Stat label="Raised" value={impact.historicalRaisedLabel} />
+            <Stat label="Students reached" value={impact.historicalStudentsLabel} />
+          </dl>
+        </div>
 
-        <div className="mt-10 grid gap-6 lg:grid-cols-2">
-          {/* Historical milestones */}
-          <div className="rounded-2xl border border-brown/10 bg-cream p-6">
-            <h3 className="text-sm font-semibold uppercase tracking-widest text-burgundy">
-              Since January
-            </h3>
-            <dl className="mt-5 grid grid-cols-2 gap-4">
-              <div>
-                <dt className="text-sm text-brown-light">Raised</dt>
-                <dd className="font-display text-3xl font-bold text-brown">
-                  {impact.historicalRaisedLabel}
-                </dd>
+        <div className={card} aria-live="polite">
+          <h3 className={`${heading} text-burgundy`}>3rd edition</h3>
+          <dl className="mt-4 grid grid-cols-2 gap-4">
+            <Stat label="Raised" value={current ? formatNaira(current.totalKobo) : "—"} accent />
+            <Stat
+              label="Meals funded"
+              value={current ? current.meals.toLocaleString("en-NG") : "—"}
+              accent
+            />
+          </dl>
+          {current && (
+            <div className="mt-5">
+              <div
+                className="h-2 overflow-hidden rounded-full bg-brown/10"
+                role="progressbar"
+                aria-label="Next meal"
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={progressPct}
+              >
+                <div className="h-full bg-orange" style={{ width: `${progressPct}%` }} />
               </div>
-              <div>
-                <dt className="text-sm text-brown-light">Students reached</dt>
-                <dd className="font-display text-3xl font-bold text-brown">
-                  {impact.historicalStudentsLabel}
-                </dd>
-              </div>
-            </dl>
-          </div>
-
-          {/* Current edition — verified donations only */}
-          <div className="rounded-2xl bg-brown p-6 text-cream shadow-sm" aria-live="polite">
-            <h3 className="text-sm font-semibold uppercase tracking-widest text-yellow">
-              3rd edition: verified donations
-            </h3>
-            {current ? (
-              <>
-                <dl className="mt-5 grid grid-cols-2 gap-4">
-                  <div>
-                    <dt className="text-sm text-cream/80">Raised</dt>
-                    <dd className="font-display text-3xl font-bold">
-                      {formatNaira(current.totalKobo)}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-sm text-cream/80">Meals funded</dt>
-                    <dd className="font-display text-3xl font-bold">
-                      {current.meals.toLocaleString("en-NG")}
-                    </dd>
-                  </div>
-                </dl>
-                <div className="mt-6">
-                  <p className="text-sm text-cream/80">
-                    {formatNaira(current.remainderKobo)} of{" "}
-                    {formatNaira(mealCostKobo)} towards the next meal
-                  </p>
-                  <div
-                    className="mt-2 h-3 overflow-hidden rounded-full bg-cream/20"
-                    role="progressbar"
-                    aria-label="Progress towards the next meal"
-                    aria-valuemin={0}
-                    aria-valuemax={100}
-                    aria-valuenow={progressPct}
-                  >
-                    <div className="h-full bg-yellow" style={{ width: `${progressPct}%` }} />
-                  </div>
-                </div>
-              </>
-            ) : (
-              <p className="mt-5 text-cream/80">Live totals are loading. Please check back shortly.</p>
-            )}
-            <p className="mt-6 text-xs text-cream/70">
-              Meals funded by donations to this edition, at{" "}
-              {formatNaira(mealCostKobo)} per meal. They are counted separately
-              from students already reached.
-            </p>
-          </div>
+              <p className="mt-2 text-xs text-brown-light">
+                Next meal: {formatNaira(current.remainderKobo)} / {formatNaira(mealCostKobo)}
+              </p>
+            </div>
+          )}
         </div>
       </div>
-    </section>
+    </Section>
   );
 }
