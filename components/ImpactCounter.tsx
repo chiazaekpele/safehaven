@@ -9,9 +9,9 @@ const POLL_MS = 30_000;
 
 function Stat({ label, value, accent = false }: { label: string; value: string; accent?: boolean }) {
   return (
-    <div>
-      <dt className="text-sm text-brown-light">{label}</dt>
-      <dd className={`text-2xl font-bold sm:text-3xl ${accent ? "text-burgundy" : "text-brown"}`}>
+    <div className="flex items-baseline justify-between gap-4 py-3">
+      <dt className="text-brown-light">{label}</dt>
+      <dd className={`text-2xl font-bold tabular-nums ${accent ? "text-burgundy" : "text-brown"}`}>
         {value}
       </dd>
     </div>
@@ -54,7 +54,7 @@ export function ImpactCounter({ initial }: { initial: PublicImpact }) {
       <div className="grid gap-4 sm:grid-cols-2">
         <div className={card}>
           <h3 className={`${heading} text-brown-light`}>Since January</h3>
-          <dl className="mt-4 grid grid-cols-2 gap-4">
+          <dl className="mt-2 divide-y divide-brown/10">
             <Stat label="Raised" value={impact.historicalRaisedLabel} />
             <Stat label="Students reached" value={impact.historicalStudentsLabel} />
           </dl>
@@ -62,7 +62,7 @@ export function ImpactCounter({ initial }: { initial: PublicImpact }) {
 
         <div className={card} aria-live="polite">
           <h3 className={`${heading} text-burgundy`}>3rd edition</h3>
-          <dl className="mt-4 grid grid-cols-2 gap-4">
+          <dl className="mt-2 divide-y divide-brown/10">
             <Stat label="Raised" value={current ? formatNaira(current.totalKobo) : "—"} accent />
             <Stat
               label="Meals funded"
@@ -71,7 +71,7 @@ export function ImpactCounter({ initial }: { initial: PublicImpact }) {
             />
           </dl>
           {current && (
-            <div className="mt-5">
+            <div className="mt-3">
               <div
                 className="h-2 overflow-hidden rounded-full bg-brown/10"
                 role="progressbar"
