@@ -31,20 +31,30 @@ export function computeImpact(input: {
   };
 }
 
-export async function getPublicImpact(): Promise<PublicImpact> {
-  // Only successful donations for this edition count; pending and failed never do.
-  const rows = await db()`
-    SELECT
-      s.historical_raised_label,
-      s.historical_students_label,
-      s.meal_cost_kobo,
-      (SELECT COALESCE(SUM(d.amount_kobo), 0)
-         FROM donations d
-        WHERE d.status = 'successful' AND d.campaign_edition = ${CAMPAIGN_EDITION}) AS total_kobo
-    FROM campaign_settings s
-    LIMIT 1
-  `;
-  const row = rows[0];
+/**
+ * The public aggregate. Only successful donations for the given edition count;
+ * pending and failed never do. $1 = campaign edition.
+ */
+export const IMPACT_SQL = `
+  SELECT
+    s.historical_raised_label,
+    s.historical_students_label,
+    s.meal_cost_kobo,
+    (SELECT COALESCE(SUM(d.amount_kobo), 0)
+       FROM donations d
+      WHERE d.status = 'successful' AND d.campaign_edition = $1) AS total_kobo
+  FROM campaign_settings s
+  LIMIT 1
+`;
+
+type ImpactRow = {
+  historical_raised_label: string;
+  historical_students_label: string;
+  meal_cost_kobo: string | number;
+  total_kobo: string | number;
+};
+
+export function impactFromRow(row: ImpactRow | undefined): PublicImpact {
   if (!row) throw new Error("campaign_settings row missing; run npm run db:migrate");
   return computeImpact({
     historicalRaisedLabel: row.historical_raised_label,
@@ -52,6 +62,11 @@ export async function getPublicImpact(): Promise<PublicImpact> {
     mealCostKobo: toSafeInt(row.meal_cost_kobo),
     totalKobo: toSafeInt(row.total_kobo),
   });
+}
+
+export async function getPublicImpact(): Promise<PublicImpact> {
+  const rows = (await db().query(IMPACT_SQL, [CAMPAIGN_EDITION])) as ImpactRow[];
+  return impactFromRow(rows[0]);
 }
 
 /** Never let a database hiccup break the page. */
