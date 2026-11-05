@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { formatNaira } from "@/lib/money";
+import { ThankYou } from "./ThankYou";
 
 type Result =
   | { state: "checking" }
@@ -61,7 +61,7 @@ export function PaymentStatus({ reference }: { reference: string | null }) {
   }, [reference, poll]);
 
   if (result.state === "successful") {
-    return <SuccessSummary amountKobo={result.amountKobo} meals={result.meals} />;
+    return <ThankYou amountKobo={result.amountKobo} meals={result.meals} />;
   }
 
   const link =
@@ -109,18 +109,6 @@ export function PaymentStatus({ reference }: { reference: string | null }) {
           Check again
         </button>
       )}
-    </div>
-  );
-}
-
-export function SuccessSummary({ amountKobo, meals }: { amountKobo: number; meals: number }) {
-  return (
-    <div>
-      <h1 className="text-2xl font-bold sm:text-3xl">Payment confirmed</h1>
-      <p className="mt-3 text-lg text-brown-light">
-        {formatNaira(amountKobo)}
-        {meals >= 1 ? ` · ${meals} meal${meals === 1 ? "" : "s"}` : ""}
-      </p>
     </div>
   );
 }
