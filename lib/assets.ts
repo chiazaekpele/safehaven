@@ -26,9 +26,9 @@ export const IMAGES = {
   },
   flyer: {
     src: "/flyer/flyer.jpg",
-    alt: "Safe Haven Foundation 3rd Edition Food Drive flyer",
-    width: 1080,
-    height: 1350,
-    available: false,
+    alt: "Safe Haven Foundation presents Food Donation, 3rd Edition. Help provide a meal. We can't fix everything that's wrong with the world but with ₦1,200 we can provide a meal to one person. You can also donate provisions.",
+    width: 1672,
+    height: 941,
+    available: true,
   },
 } satisfies Record<string, ImageSlot>;
