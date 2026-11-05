@@ -40,6 +40,31 @@ To change a setting later (Neon SQL editor):
 UPDATE campaign_settings SET meal_cost_kobo = 120000, updated_at = NOW();
 ```
 
+## Paystack
+
+| Setting (Paystack Dashboard → Settings → API Keys & Webhooks) | Value |
+|---|---|
+| Callback URL | `https://<your-domain>/donate/success` |
+| Webhook URL | `https://<your-domain>/api/payments/webhook` |
+
+- Test mode and Live mode have **separate** keys and webhook URL fields. Set both.
+- The callback URL is also sent with every transaction from `NEXT_PUBLIC_SITE_URL`, so the
+  dashboard value is only a fallback. Keep them the same.
+- Paystack cannot reach `localhost`, so webhooks only arrive once the site is deployed.
+  Locally, payments are confirmed when the donor returns to `/donate/success`.
+- If "pass transaction charges to customer" is on, Paystack charges the donor the donation
+  plus fees. The site checks Paystack's `requested_amount` against the stored amount and
+  counts only the donation, never the fee.
+
+### How a payment is confirmed
+
+`/api/payments/verify` (donor returns) and `/api/payments/webhook` (Paystack notifies) both call
+`confirmPayment` in [lib/payments.ts](lib/payments.ts). It asks Paystack's verify API for the real
+status, checks reference, amount and NGN currency, then runs a conditional
+`UPDATE … WHERE status IN ('pending','failed')`. A donation can therefore become successful
+only once, whichever arrives first and however many times the webhook is retried.
+The webhook is rejected unless its `x-paystack-signature` (HMAC-SHA512 of the raw body) matches.
+
 ## Configuration in code
 
 - Minimum donation: `MIN_DONATION_NAIRA` in [lib/config.ts](lib/config.ts) — **temporary ₦100, confirm before launch**.

@@ -1,4 +1,5 @@
 // Server-only Paystack client. PAYSTACK_SECRET_KEY never leaves the server.
+import { createHmac, timingSafeEqual } from "node:crypto";
 
 const API = "https://api.paystack.co";
 const TIMEOUT_MS = 15_000;
@@ -78,4 +79,44 @@ export async function initializeTransaction(input: {
     throw new PaystackError("Paystack returned an unexpected initialize response");
   }
   return { authorizationUrl: data.authorization_url, reference: data.reference };
+}
+
+export type VerifiedTransaction = {
+  /** Paystack status: success | failed | abandoned | reversed | ongoing | pending | … */
+  status: string;
+  reference: string;
+  /** Total charged in kobo; includes Paystack fees when fees are passed to the donor. */
+  amount: number;
+  /** The amount we asked for at initialization (before any donor-borne fees). */
+  requestedAmount: number;
+  currency: string;
+  paidAt: string | null;
+};
+
+/** Ask Paystack directly for the transaction's real state. */
+export async function verifyTransaction(reference: string): Promise<VerifiedTransaction> {
+  const data = await call<{
+    status: string;
+    reference: string;
+    amount: number;
+    requested_amount?: number;
+    currency: string;
+    paid_at: string | null;
+  }>(`/transaction/verify/${encodeURIComponent(reference)}`);
+  return {
+    status: data.status,
+    reference: data.reference,
+    amount: data.amount,
+    requestedAmount: data.requested_amount ?? data.amount,
+    currency: data.currency,
+    paidAt: data.paid_at,
+  };
+}
+
+/** HMAC-SHA512 of the raw body with the secret key, compared in constant time. */
+export function isValidWebhookSignature(rawBody: string, signature: string | null): boolean {
+  if (!signature || !/^[a-f0-9]{128}$/i.test(signature)) return false;
+  const expected = createHmac("sha512", secretKey()).update(rawBody, "utf8").digest();
+  const received = Buffer.from(signature, "hex");
+  return received.length === expected.length && timingSafeEqual(received, expected);
 }
